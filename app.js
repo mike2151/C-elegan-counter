@@ -38,7 +38,7 @@ app.use(cookieParser());
 
 app.disable('x-powered-by');
 
-app.use(morgan('combined'))
+//app.use(morgan('combined'))
 
 //static folder
 app.use(express.static(path.join(__dirname, 'public')));

@@ -1,0 +1,121 @@
+<!DOCTYPE HTML>
+<!--
+	TXT by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+
+
+		<title>WormTraq</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="css/main.css" />
+		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+	</head>
+	<body class="homepage">
+		<div id="page-wrapper">
+
+			<!-- Header -->
+				<header id="header">
+					<div class="logo container">
+						<div>
+							<h1><a id="logo">Analyze Pictures</h1>
+						</div>
+					</div>
+                    
+				</header>
+
+			<!-- Nav -->
+				<nav id="nav">
+					<ul>
+						<li><a href="/">Home</a></li>
+						<li class="current"><a href="/analyze">Picture</a></li>
+						<li><a href="/measure">Measure</a></li>
+						<li><a href="/video">Video</a></li>
+						<li><a href="/about">About</a></li>
+					</ul>
+				</nav>
+
+
+			<!-- Main -->
+				<div id="main-wrapper">
+					<div id="main" class="container">
+						<div class="row 200%">
+							<div class="12u">
+								<!-- Highlight -->
+									<section class="box highlight">
+                                        <h4>About</h4>
+                                        <hr>
+                                        <p>The Picture Analysis tool allows you to upload a picture of C. Elegans along with an object detection parameter.
+                                            The picture will be processed and will return a count of the worms, the lengths of the worms, the area of worms, along with the width and height of a surrounding border for each worm.
+                                        </p>
+                                        <br>
+                                        <h4>Instructions</h4>
+                                        <hr>
+                                        <p>Fill out the form (1 file upload and 1 object detection parameter) and click "process image"</p>
+                                        <br>
+										<form method="post" action="/analyze" enctype="multipart/form-data"> 
+                                        <div class="form-group">
+
+                                            <label><h4>Image File</h4></label>
+                                            <hr>
+                                            <center><div id="yourBtn" style="height: 50px; width: 150px;border: 1px dashed #BBB; cursor:pointer;" onclick="getFile()">Upload Image</div>
+                                            <div style='height: 0px;width: 0px; overflow:hidden;'><input type="file" value="upload" id="upfile" name="photo" accept="image/*" /></div></center>
+                                            <br>
+                                             <label><h4>Detection Threshold (%)</h4></label>
+                                             <p>The minimum percentage of the total picture size that the detected object should take up. 
+                                                 A smaller percentage will detect more objects but increase the number of false positives. 
+                                                 A larger percentage will detect fewer objects while picking up less false positives. However, some objects must be ignored. Suggested: .002</p>
+                                            <br>
+                                            <center><input type="number" class="form-control" name="area_percent" style="width: 8em"></center>
+                                            <br>
+										    <input type="submit" value="Process Image" name="submit">
+                                            
+                                        </div>
+										</form>
+                                        
+                                        
+									</section>
+							</div>
+						</div>
+						
+					</div>
+				</div>
+
+			<!-- Footer -->
+				<footer id="footer" class="container">
+					
+					
+
+					<!-- Copyright -->
+						<div id="copyright">
+							<ul class="menu">
+								<li><a href="https://github.com/mike2151/WormTraq">Source Code</a></li><li></li>
+							</ul>
+						</div>
+
+				</footer>
+
+			</div>
+
+		<!-- Scripts -->
+            <script>
+                function getFile(){
+                        document.getElementById("upfile").click();
+                        document.getElementById("yourBtn").innerHTML = "Uploaded";
+                    }
+            </script>
+
+			<script src="js/jquery.min.js"></script>
+			<script src="js/jquery.dropotron.min.js"></script>
+			<script src="js/skel.min.js"></script>
+			<script src="js/skel-viewport.min.js"></script>
+			<script src="js/util.js"></script>
+			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="js/main.js"></script>
+
+	</body>
+</html>

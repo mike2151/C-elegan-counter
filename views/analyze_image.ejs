@@ -1,0 +1,111 @@
+<!DOCTYPE HTML>
+<!--
+	TXT by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>WormTraq</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="../css/main.css" />
+		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+        <style type="text/css">
+            .tg  {border-collapse:collapse;border-spacing:0;border-color:#bbb;}
+            .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#bbb;color:#594F4F;background-color:#E0FFEB;}
+            .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#bbb;color:#493F3F;background-color:#9DE0AD;}
+            .tg .tg-bzci{font-size:20px;text-align:center;vertical-align:top}
+            .tg .tg-fbrz{font-weight:bold;font-size:20px;text-align:center;vertical-align:top}
+        </style>
+
+	</head>
+	<body class="homepage">
+		<div id="page-wrapper">
+
+			<!-- Header -->
+				<header id="header">
+					<div class="logo container">
+						<div>
+							<h1><a id="logo">Analyze Pictures</h1>
+						</div>
+					</div>
+                    
+				</header>
+
+			<!-- Nav -->
+				<nav id="nav">
+					<ul>
+						<li><a href="/">Home</a></li>
+						<li class="current"><a href="/analyze">Picture</a></li>
+						<li><a href="/measure">Measure</a></li>
+						<li><a href="/video">Video</a></li>
+						<li><a href="/about">About</a></li>
+					</ul>
+				</nav>
+
+
+			<!-- Main -->
+				<div id="main-wrapper">
+					<div id="main" class="container">
+						<div class="row 200%">
+							<div class="12u">
+								<!-- Highlight -->
+									<section class="box highlight">
+                                        <img src="<%=image_link %>" width="<%=image_width %>" height="<%=image_height %>"/>
+									    <p>Width of image: <%= image_width %>. Height of image: <%= image_height %>
+                                        <br>
+                                        <h1 style="font-size: 5em !important; padding-top: 5%">Data Table</h1>
+                                        <p>All Values are in pixels</p>
+                                        <table class="tg">
+                                            <tr>
+                                                <th class="tg-fbrz">Worm Number </th>
+                                                <th class="tg-fbrz">Length of Worm </th>
+                                                <th class="tg-fbrz">Area of Worm</th>
+                                                <th class="tg-fbrz">Bordering Box Width</th>
+                                                <th class="tg-fbrz">Bordering Box Height</th>
+                                            </tr>
+                                            <% worm_array.forEach(function(el, index) { %>
+                                            <tr>
+                                                <td class="tg-bzci"><%= index+1 %></td>
+                                                <td class="tg-bzci"><%= el.len %></td>
+                                                <td class="tg-bzci"><%= el.area %></td>
+                                                <td class="tg-bzci"><%= el.bounding_width %></td>
+                                                <td class="tg-bzci"><%= el.bounding_height %></td>
+                                            </tr>
+                                            <% }); %>
+                                            
+                                        </table>
+                                                                                    
+                                        <p>Not get what you want? Try the <a href="/measure">Measuring</a> tool.</p>
+									</section>
+							</div>
+						</div>
+						
+					</div>
+				</div>
+
+			<!-- Footer -->
+				<footer id="footer" class="container">
+						<div id="copyright">
+							<ul class="menu">
+								<li><a href="https://github.com/mike2151/WormTraq">Source Code</a></li><li></li>
+							</ul>
+						</div>
+
+				</footer>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="/js/jquery.min.js"></script>
+			<script src="js/jquery.dropotron.min.js"></script>
+			<script src="js/skel.min.js"></script>
+			<script src="js/skel-viewport.min.js"></script>
+			<script src="js/util.js"></script>
+			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="js/main.js"></script>
+
+	</body>
+</html>

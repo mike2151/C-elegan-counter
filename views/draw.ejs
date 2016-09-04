@@ -1,0 +1,195 @@
+<!DOCTYPE HTML>
+<!--
+	TXT by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>WormTraq</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="css/main.css" />
+		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+        <script   src="https://code.jquery.com/jquery-3.1.0.js"   integrity="sha256-slogkvB1K3VOkzAI8QITxV3VzpOnkeNVsKvtkYLMjfk="   crossorigin="anonymous"></script>
+      <script src="js/sketch.js"></script>
+	</head>
+
+
+<body class="homepage">
+    <script>
+        $(document).ready(function() {
+        init();   
+        });
+    </script>
+    
+		<div id="page-wrapper">
+
+			<!-- Header -->
+				<header id="header">
+					<div class="logo container">
+						<div>
+							<h1><a id="logo">Analyze Pictures</h1>
+						</div>
+					</div>
+                    
+				</header>
+
+			<!-- Nav -->
+				<nav id="nav">
+					<ul>
+						<li><a href="/">Home</a></li>
+						<li><a href="/analyze">Picture</a></li>
+						<li class="current"><a href="/measure">Measure</a></li>
+						<li><a href="/video">Video</a></li>
+						<li><a href="/about">About</a></li>
+					</ul>
+				</nav>
+
+
+			<!-- Main -->
+				<div id="main-wrapper">
+					<div id="main" class="container">
+						<div class="row 200%">
+							<div class="12u">
+								<!-- Highlight -->
+									<section class="box highlight">
+                                         <h4>About</h4>
+                                            <hr>
+                                            <p>The measuring tool allows you to draw a line on an image and then display the length of that line.</p>
+                                            <h4>Instructions</h4>
+                                            <hr>
+                                            <p>Upload an image and start measuring on the image. Click the clear button once and then again on the iamge to clear any measurements.
+                                                The bottom contains the length(in pixels) of the current image.
+                                            </p>
+                                            <br>
+                                            <h4>Measuring Tool</h4>
+                                            <hr>
+                                            <center><div id="yourBtn" style="height: 50px; width: 150px;border: 1px dashed #BBB; cursor:pointer;" onclick="getFile()">Upload Image</div>
+                                            <div style='height: 0px;width: 0px; overflow:hidden;'><input type="file" value="upload" id="imageLoader" name="photo" accept="image/*"/></div></center>
+
+                                            <div class="tools" style="padding-top: 5%; padding-bottom: 5%">
+                                            <a href="#tools_sketch" data-tool="marker"><button onclick="highlight_draw()" style="background: #7B9878" id="draw_button">Measure</button></a>
+                                            <a href="#tools_sketch" data-tool="eraser" ><button onclick="clear_length()" id="clear_button">Clear</button></a>
+                                            </div>
+
+                                            
+                                            <canvas id="tools_sketch"></canvas>
+                                           
+                                           
+                                           
+                                            <script type="text/javascript">
+                                            $(function() {
+                                                $('#tools_sketch').sketch({defaultColor: "#ff0"});
+                                            });
+                                            </script>
+                                            <h2 id="length">Length: 0</h2>
+                                            <br>
+                                            <p id="image_width">Image Width: Image Height</p>
+                                            
+                                            <script>
+
+                                            function clear_length() {
+                                                document.getElementById("clear_button").style.background="#7B9878";
+                                                document.getElementById("draw_button").style.background="#C1EDBB";
+                                                var length = document.getElementById("length");   
+                                                length.innerHTML = 'Length: 0';
+                                            }
+
+                                            function highlight_draw() {
+                                                document.getElementById("clear_button").style.background="#C1EDBB";
+                                                document.getElementById("draw_button").style.background="#7B9878";
+                                            }
+
+                                            function init() {
+                                                var track = false;
+                                                var cum_length = 0;
+                                                var prev_x;
+                                                var prev_y;
+                                                $('#tools_sketch').mousedown(function(e){
+                                                    track = true;
+                                                    prev_x = e.clientX;
+                                                    prev_y = e.clientY;
+                                            });
+                                            $('#tools_sketch').mouseup(function(e){
+                                                    track = false;
+                                            });
+                                            $('#tools_sketch').mousemove(function(e){
+                                                if (track == true) {
+                                                    var length = document.getElementById("length");  
+                                                    if (length.innerHTML == 'Length: 0') {
+                                                        cum_length = 0;
+                                                    } 
+                                                    var x = e.clientX;
+                                                    var y = e.clientY;     
+                                                    var length = document.getElementById("length");   
+
+                                                    var distance = Math.sqrt( (prev_x-x)*(prev_x-x) + (prev_y-y)*(prev_y-y) );
+                                                    
+                                                    cum_length = Number((cum_length + distance).toFixed(1));
+                                                    length.innerHTML = 'Length: ' + cum_length;
+
+                                                    prev_x = x;
+                                                    prev_y = y;
+                                                }
+                                            });
+                                            }
+                                            </script>
+
+                                    </section>
+							</div>
+						</div>
+						
+					</div>
+				</div>
+
+			<!-- Footer -->
+				<footer id="footer" class="container">
+						<div id="copyright">
+							<ul class="menu">
+								<li><a href="https://github.com/mike2151/WormTraq">Source Code</a></li><li></li>
+							</ul>
+						</div>
+
+				</footer>
+
+			</div>
+
+		<!-- Scripts -->
+        <script>
+                function getFile(){
+                        document.getElementById("imageLoader").click();
+                        
+                    }
+            </script>
+        <script>
+        var imageLoader = document.getElementById('imageLoader');
+        imageLoader.addEventListener('change', handleImage, false);
+        var canvas = document.getElementById('tools_sketch');
+        var ctx = canvas.getContext('2d');
+
+
+        function handleImage(e){
+            
+            var reader = new FileReader();
+            reader.onload = function(event){
+                var img = new Image();
+                img.onload = function(){
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    document.getElementById("image_width").innerHTML="Image Width: " + img.width.toString() + " Image Height: " + img.height.toString();
+                    $('#tools_sketch').css("background-image", "url(" + reader.result + ")");
+                    //ctx.drawImage(img,0,0);
+                }
+                img.src = event.target.result;
+            }
+            reader.readAsDataURL(e.target.files[0]);     
+        }
+
+    </script>
+
+	</body>
+</html>
+
+
