@@ -28,7 +28,7 @@
 				<header id="header">
 					<div class="logo container">
 						<div>
-							<h1><a id="logo">Analyze Pictures</h1>
+							<h1><a id="logo">Analyze Video</h1>
 						</div>
 					</div>
                     
@@ -38,9 +38,9 @@
 				<nav id="nav">
 					<ul>
 						<li><a href="/">Home</a></li>
-						<li class="current"><a href="/analyze">Picture</a></li>
+						<li><a href="/analyze">Picture</a></li>
 						<li><a href="/measure">Measure</a></li>
-						<li><a href="/video">Video</a></li>
+						<li class="current"><a href="/video">Video</a></li>
 						<li><a href="/about">About</a></li>
 					</ul>
 				</nav>
@@ -53,26 +53,25 @@
 							<div class="12u">
 								<!-- Highlight -->
 									<section class="box highlight">
-                                        <img src="<%=image_link %>" width="<%=image_width %>" height="<%=image_height %>"/>
-									    <p>Width of image: <%= image_width %>. Height of image: <%= image_height %>
+                                        <h2>Image One</h2>
+                                        <img src="<%= image_one_link %>" width="<%=image_one_width %>" height="<%=image_one_height %>"/>
+									    <p>Width of image: <%= image_one_width %>. Height of image: <%= image_one_height %>
+                                        <br>
+                                        <h2>Image Two</h2>
+                                        <img src="<%=image_two_link %>" width="<%=image_two_width %>" height="<%=image_two_height %>"/>
+									    <p>Width of image: <%= image_two_width %>. Height of image: <%= image_two_height %>
                                         <br>
                                         <h1 style="font-size: 5em !important; padding-top: 5%">Data Table</h1>
                                         <p>All Values are in pixels</p>
                                         <table class="tg">
                                             <tr>
                                                 <th class="tg-fbrz">Worm Number </th>
-                                                <th class="tg-fbrz">Length of Worm </th>
-                                                <th class="tg-fbrz">Area of Worm</th>
-                                                <th class="tg-fbrz">Bordering Box Width</th>
-                                                <th class="tg-fbrz">Bordering Box Height</th>
+                                                <th class="tg-fbrz">Velocity of Worm </th>
                                             </tr>
-                                            <% worm_array.forEach(function(el, index) { %>
+                                            <% velocities.forEach(function(el, index) { %>
                                             <tr>
                                                 <td class="tg-bzci"><%= index+1 %></td>
-                                                <td class="tg-bzci"><%= el.len %></td>
-                                                <td class="tg-bzci"><%= el.area %></td>
-                                                <td class="tg-bzci"><%= el.bounding_width %></td>
-                                                <td class="tg-bzci"><%= el.bounding_height %></td>
+                                                <td class="tg-bzci"><%= el %></td>
                                             </tr>
                                             <% }); %>
                                             

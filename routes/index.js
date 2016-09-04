@@ -5,7 +5,8 @@ var Caman = require('caman').Caman;
 var Jimp = require("jimp");
 var cv = require("opencv");
 var multer  =   require('multer');
-
+var ffmpeg = require('fluent-ffmpeg');
+var fse = require('fs-extra');
 
 //generate unique token for the session
 var session_token = getRandomInt(1, 10000000).toString();
@@ -14,6 +15,9 @@ var session_token = getRandomInt(1, 10000000).toString();
 var image_width;
 var image_height;
 var worm_array;
+var velocity_array;
+var im1w, im1h, im2w, im2h;
+var velocities = [];
 
 var storage =   multer.diskStorage({
   destination: function (req, file, callback) {
@@ -24,12 +28,45 @@ var storage =   multer.diskStorage({
   }
 });
 
+var storage_vid =   multer.diskStorage({
+  destination: function (req, file, callback) {
+    callback(null, './public/uploads');
+  },
+  filename: function (req, file, callback) {
+    callback(null, file.fieldname + '-' + session_token + ".mp4");
+  }
+});
+
 var upload = multer({ storage : storage}).single('photo');
+var upload_vid = multer({ storage : storage_vid}).single('video');
 
 
 router.get("/", function(req,res) {
     res.render("index");
+    //count objects and delete if folder is too big (over 100 items)
+    var item_count = 0;
+    fse.walk('./public/uploads')
+    .on('data', function (item) {
+        item_count = item_count + 1;
+    })
+    .on('end', function () {
+        if (item_count > 100) {
+        fse.emptyDir('./public/uploads', function (err) {
+            if (err) {
+                console.log('File not found!');
+            } 
+        });
+        }
+    });
+
     
+    
+
+
+});
+
+router.get("/about", function(req,res) {
+    res.render("about");
 });
 
 router.get("/analyze", function(req,res) {
@@ -46,14 +83,14 @@ router.post("/analyze", function(req,res) {
         if(err) {
             res.redirect("/analyze");
         }
-        //console.log("photo-" + session_token + ".png");
+
         var area_percent = req.body.area_percent;
 
-        initial_process();
+        initial_process(session_token);
         while(!fileExists("./public/uploads/" + "output-" + session_token + ".png")) {require('deasync').sleep(1000);}
-        processWorms();
+        processWorms(session_token);
         while(!fileExists("./public/uploads/" + "processed-" + session_token + ".png")) {require('deasync').sleep(1000);}
-        find_contours(area_percent);
+        find_contours(session_token, area_percent);
         
         res.redirect("/analyze/" + session_token);
     });
@@ -76,7 +113,93 @@ router.get("/video", function(req,res) {
 });
 
 router.post("/video", function(req,res) {
-    
+    upload_vid(req,res,function(err) {
+        if(err) {
+            res.redirect("/video_analyze");
+        }
+        res.redirect("/video_analyze/" + session_token);
+    });
+});
+
+router.get("/video_analyze/:token", function(req,res) {
+    var token = req.params.token;
+    var video_path = ("../uploads/" + "video-" + token + ".mp4");
+    res.render("analyze_single_video", {video_path: video_path, token: token});
+});
+
+router.post("/video_analyze/:token", function(req,res) {
+    var token = req.params.token;
+    var time_point = req.body.time;
+    var area_percent_image = parseFloat(req.body.areapercent);
+    var new_session_token = getRandomInt(1,1000000000).toString();
+    var proc = new ffmpeg("./public/uploads/" + "video-" + token + ".mp4")
+    .takeScreenshots({
+        count: 1,
+        filename: "photo-" + new_session_token,
+        timemarks: [time_point ] // number of seconds
+        }, "./public/uploads/", function(err) {
+  });
+        while(!fileExists("./public/uploads/" + "photo-" + new_session_token + ".png")) {require('deasync').sleep(1000);}
+        initial_process(new_session_token);
+        while(!fileExists("./public/uploads/" + "output-" + new_session_token + ".png")) {require('deasync').sleep(1000);}
+        processWorms(new_session_token);
+        while(!fileExists("./public/uploads/" + "processed-" + new_session_token + ".png")) {require('deasync').sleep(1000);}
+        find_contours(new_session_token,area_percent_image);
+        
+        res.redirect("/analyze/" + new_session_token);
+});
+
+router.post("/video_velocity/:token", function(req,res) {
+    var token = req.params.token;
+    var start_time = req.body.start_time;
+    var end_time = req.body.end_time;
+    var time_between = end_time - start_time;
+    var area_percent_image = parseFloat(req.body.areapercent_velocity);
+    var new_session_token = getRandomInt(1,1000000000).toString();
+    var second_new_sessions_token = getRandomInt(1,1000000000).toString();
+    var proc = new ffmpeg("./public/uploads/" + "video-" + token + ".mp4")
+    .takeScreenshots({
+        count: 1,
+        filename: "photo-" + new_session_token,
+        timemarks: [start_time ] // number of seconds
+        }, "./public/uploads/", function(err) {
+  });
+  var proc_two = new ffmpeg("./public/uploads/" + "video-" + token + ".mp4")
+    .takeScreenshots({
+        count: 1,
+        filename: "photo-" + second_new_sessions_token,
+        timemarks: [end_time ] // number of seconds
+        }, "./public/uploads/", function(err) {
+  });
+
+  //two images now created
+        while(!fileExists("./public/uploads/" + "photo-" + new_session_token + ".png") && !fileExists("./public/uploads/" + "photo-" + second_new_sessions_token + ".png")) {require('deasync').sleep(1000);}
+        initial_process(new_session_token);
+        initial_process(second_new_sessions_token);
+        while(!fileExists("./public/uploads/" + "output-" + new_session_token + ".png") && !fileExists("./public/uploads/" + "output-" + second_new_sessions_token + ".png")) {require('deasync').sleep(1000);}
+        processWorms(new_session_token);
+        processWorms(second_new_sessions_token);
+        while(!fileExists("./public/uploads/" + "processed-" + new_session_token + ".png") && !fileExists("./public/uploads/" + "processed-" + second_new_sessions_token + ".png")) {require('deasync').sleep(1000);}
+        //two files are now created.
+        
+        get_velocity(new_session_token, second_new_sessions_token, time_between, area_percent_image);
+        var image_one_link = ("../uploads/" + "worms-" + new_session_token + ".png");
+        var image_two_link = ("../uploads/" + "worms-" + second_new_sessions_token + ".png");
+        
+        res.render("velocities", {image_one_link: image_one_link, image_two_link: image_two_link, image_one_width: im1w, image_one_height: im1h, image_two_width: im2w, image_two_height: im2h, velocities: velocities});
+        while(!fileExists("./public/uploads/" + "worms-" + new_session_token + ".png") && !fileExists("./public/uploads/" + "worms-" + second_new_sessions_token + ".png")) {require('deasync').sleep(1000);}
+        //delete old files to keep room
+        fs.unlinkSync("./public/uploads/" + "photo-" + new_session_token + ".png");
+        fs.unlinkSync("./public/uploads/" + "photo-" + second_new_sessions_token + ".png");
+        fs.unlinkSync("./public/uploads/" + "output-" + new_session_token + ".png");
+        fs.unlinkSync("./public/uploads/" + "output-" + second_new_sessions_token + ".png");
+        fs.unlinkSync("./public/uploads/" + "processed-" + new_session_token + ".png");
+        fs.unlinkSync("./public/uploads/" + "processed-" + second_new_sessions_token + ".png");
+
+});
+
+router.get("/video_velocity/:token", function(req,res) {
+    res.redirect("/video");
 });
 
 
@@ -89,7 +212,9 @@ router.post("/video", function(req,res) {
 
 
 
-function initial_process() {
+
+
+function initial_process(session_token) {
     
     Caman("./public/uploads/" + "photo-" + session_token + ".png", function () {
                 this.contrast(65);
@@ -103,7 +228,7 @@ function initial_process() {
     
 }
 
-function processWorms() {
+function processWorms(session_token) {
     
     Jimp.read("./public/uploads/" + "output-" + session_token + ".png").then(function (pic) {
         
@@ -163,7 +288,7 @@ function processWorms() {
 
 }
 
-function find_contours(area_percent) {
+function find_contours(session_token, area_percent) {
     
 
   cv.readImage("./public/uploads/" + "processed-" + session_token + ".png", function(err, im){
@@ -237,6 +362,139 @@ function find_contours(area_percent) {
 });
 }
 
+
+
+function get_velocity(first_token, second_token, time, area_percent) {
+
+    var image_one_width;
+    var image_one_height;
+    var image_two_width;
+    var image_two_height;
+    var image_one_positions = [];
+    var image_two_positions = [];
+    var velocity_array = [];
+
+    cv.readImage("./public/uploads/" + "processed-" + first_token + ".png", function(err, im){
+    if (err) throw err;
+    var width = im.width();
+    var height = im.height();
+    image_one_width = width;
+    image_one_height = height;
+    var total_area = width*height;
+    var maxArea;
+    if (!area_percent) {maxArea = 2500;}
+    else {
+     maxArea = parseFloat(total_area) * area_percent;
+    }
+    var GREEN = [0, 255, 0]; // B, G, R
+    var WHITE = [255, 255, 255]; // B, G, R
+    var RED   = [0, 0, 255]; // B, G, R
+
+    var worm_contours = [];
+    var big = new cv.Matrix(height, width);
+
+    im.convertGrayscale();
+    var im_canny = im.copy();
+    im_canny.canny(0, 100);
+    im_canny.dilate(2);
+
+    var contours = im_canny.findContours();
+
+    for(i = 0; i < contours.size(); i++) {
+    if(contours.area(i) > maxArea) {
+      worm_contours.push(i);
+      var moments = contours.moments(i);
+      var cgx = Math.round(moments.m10 / moments.m00);
+      var cgy = Math.round(moments.m01 / moments.m00);
+      big.drawContour(contours, i, GREEN);
+      var array_of_points = contours.boundingRect(i);
+      var point1 = [array_of_points["x"], array_of_points["y"]];
+      var point2 = [array_of_points["width"], array_of_points["height"]]
+      big.rectangle(point1, point2, WHITE);
+      big.putText(worm_contours.length.toString(), cgx, cgy, "HERSEY_COMPLEX_SMALL", RED, 1, 1);
+
+     image_one_positions.push({x: cgx, y: cgy});  
+     array_of_points = [];
+    }
+  }
+  big.save("./public/uploads/" + "worms-" + first_token + ".png");
+});
+
+    cv.readImage("./public/uploads/" + "processed-" + second_token + ".png", function(err, im){
+    if (err) throw err;
+    var width = im.width();
+    var height = im.height();
+    image_two_width = width;
+    image_two_height = height;
+    var total_area = width*height;
+    var maxArea;
+    if (!area_percent) {maxArea = 2500;}
+    else {
+     maxArea = parseFloat(total_area) * area_percent;
+    }
+    var GREEN = [0, 255, 0]; // B, G, R
+    var WHITE = [255, 255, 255]; // B, G, R
+    var RED   = [0, 0, 255]; // B, G, R
+
+    var worm_contours = [];
+    var big = new cv.Matrix(height, width);
+
+    im.convertGrayscale();
+    var im_canny = im.copy();
+    im_canny.canny(0, 100);
+    im_canny.dilate(2);
+
+    var contours = im_canny.findContours();
+
+    for(i = 0; i < contours.size(); i++) {
+    if(contours.area(i) > maxArea) {
+      worm_contours.push(i);
+      var moments = contours.moments(i);
+      var cgx = Math.round(moments.m10 / moments.m00);
+      var cgy = Math.round(moments.m01 / moments.m00);
+      big.drawContour(contours, i, GREEN);
+      var array_of_points = contours.boundingRect(i);
+      var point1 = [array_of_points["x"], array_of_points["y"]];
+      var point2 = [array_of_points["width"], array_of_points["height"]]
+      big.rectangle(point1, point2, WHITE);
+      big.putText(worm_contours.length.toString(), cgx, cgy, "HERSEY_COMPLEX_SMALL", RED, 1, 1);
+
+     image_two_positions.push({x: cgx, y: cgy});  
+     array_of_points = [];
+    }
+  }
+  big.save("./public/uploads/" + "worms-" + second_token + ".png");
+});
+//now have two position arrays of points in image_one_positions and image_two_positions
+ var length_one = image_one_positions.length;
+ var length_two = image_two_positions.length;
+ if (length_one > length_two) {
+     image_one_positions = image_one_positions.slice(0,length_two-1);
+ }
+ if (length_one < length_two) {
+     image_two_positions = image_two_positions.slice(0,length_one-1);
+ }
+ //now equal length
+ for (var i = 0; i < image_one_positions.length; i++) {
+     var x1 = image_one_positions[i].x;
+     var y1 = image_one_positions[i].y;
+     var x2 = image_two_positions[i].x;
+     var y2 = image_two_positions[i].y;
+
+     var displacement = Math.sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2) );
+     var velocity = displacement / time;
+     
+     velocity_array.push(velocity);
+ }
+
+ im1w = image_one_width;
+ im1h = image_one_height;
+ im2w = image_two_width;
+ im2h = image_two_height;
+ velocities = velocity_array;
+
+
+}
 
 
 
