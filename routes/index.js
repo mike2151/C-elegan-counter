@@ -3,6 +3,7 @@ var router = express.Router();
 var fs = require('fs');
 var Caman = require('caman').Caman;
 var Jimp = require("jimp");
+var path = require("path");
 var cv = require("opencv");
 var multer  =   require('multer');
 var ffmpeg = require('fluent-ffmpeg');
@@ -19,9 +20,11 @@ var velocity_array;
 var im1w, im1h, im2w, im2h;
 var velocities = [];
 
+var current_path = __dirname.toString();
+
 var storage =   multer.diskStorage({
   destination: function (req, file, callback) {
-    callback(null, './public/uploads');
+    callback(null, current_path);
   },
   filename: function (req, file, callback) {
     callback(null, file.fieldname + '-' + session_token + ".png");
@@ -30,7 +33,7 @@ var storage =   multer.diskStorage({
 
 var storage_vid =   multer.diskStorage({
   destination: function (req, file, callback) {
-    callback(null, './public/uploads');
+    callback(null, current_path + "/../public/video");
   },
   filename: function (req, file, callback) {
     callback(null, file.fieldname + '-' + session_token + ".mp4");
@@ -44,6 +47,7 @@ var upload_vid = multer({ storage : storage_vid}).single('video');
 router.get("/", function(req,res) {
     res.render("index");
     //count objects and delete if folder is too big (over 100 items)
+    /*
     var item_count = 0;
     fse.walk('./public/uploads')
     .on('data', function (item) {
@@ -58,10 +62,7 @@ router.get("/", function(req,res) {
         });
         }
     });
-
-    
-    
-
+    */
 
 });
 
@@ -84,12 +85,12 @@ router.post("/analyze", function(req,res) {
             res.redirect("/analyze");
         }
 
-        var area_percent = req.body.area_percent;
+        var area_percent = parseFloat(req.body.area_percent);
 
         initial_process(session_token);
-        while(!fileExists("./public/uploads/" + "output-" + session_token + ".png")) {require('deasync').sleep(1000);}
+        while(!fileExists( current_path +  "/output-" + session_token + ".png")) {require('deasync').sleep(1000);}
         processWorms(session_token);
-        while(!fileExists("./public/uploads/" + "processed-" + session_token + ".png")) {require('deasync').sleep(1000);}
+        while(!fileExists( current_path +  "/processed-" + session_token + ".png")) {require('deasync').sleep(1000);}
         find_contours(session_token, area_percent);
         
         res.redirect("/analyze/" + session_token);
@@ -98,11 +99,11 @@ router.post("/analyze", function(req,res) {
 
 router.get("/analyze/:token", function(req,res) {
     var token = req.params.token;
-    if (fileExists("./public/uploads/" + "photo-" + token + ".png")){fs.unlinkSync("./public/uploads/" + "photo-" + token + ".png");}
-    if (fileExists("./public/uploads/" + "output-" + token + ".png")){fs.unlinkSync("./public/uploads/" + "output-" + token + ".png");}
-    if (fileExists("./public/uploads/" + "processed-" + token + ".png")){fs.unlinkSync("./public/uploads/" + "processed-" + token + ".png");}
+    if (fileExists(current_path +  "/photo-" + token + ".png")){fs.unlinkSync( current_path +  "/photo-" + token + ".png");}
+    if (fileExists(current_path +  "/output-" + token + ".png")){fs.unlinkSync( current_path +  "/output-" + token + ".png");}
+    if (fileExists( current_path +  "/processed-" + token + ".png")){fs.unlinkSync( current_path +  "/processed-" + token + ".png");}
 
-    var image_link = ("../uploads/" + "worms-" + token + ".png");
+    var image_link = ("/images" +  "/worms-" + token + ".png");
 
     res.render("analyze_image", {image_link: image_link, image_width: image_width, image_height: image_height, worm_array: worm_array});
 });
@@ -123,7 +124,7 @@ router.post("/video", function(req,res) {
 
 router.get("/video_analyze/:token", function(req,res) {
     var token = req.params.token;
-    var video_path = ("../uploads/" + "video-" + token + ".mp4");
+    var video_path = ("/video" + "/video-" + token + ".mp4");
     res.render("analyze_single_video", {video_path: video_path, token: token});
 });
 
@@ -132,18 +133,18 @@ router.post("/video_analyze/:token", function(req,res) {
     var time_point = req.body.time;
     var area_percent_image = parseFloat(req.body.areapercent);
     var new_session_token = getRandomInt(1,1000000000).toString();
-    var proc = new ffmpeg("./public/uploads/" + "video-" + token + ".mp4")
+    var proc = new ffmpeg(current_path + "/../public/video/video-" + token + ".mp4")
     .takeScreenshots({
         count: 1,
         filename: "photo-" + new_session_token,
         timemarks: [time_point ] // number of seconds
-        }, "./public/uploads/", function(err) {
+        }, current_path, function(err) {
   });
-        while(!fileExists("./public/uploads/" + "photo-" + new_session_token + ".png")) {require('deasync').sleep(1000);}
+        while(!fileExists(current_path +  "/photo-" + new_session_token + ".png")) {require('deasync').sleep(1000);}
         initial_process(new_session_token);
-        while(!fileExists("./public/uploads/" + "output-" + new_session_token + ".png")) {require('deasync').sleep(1000);}
+        while(!fileExists( current_path +  "/output-" + new_session_token + ".png")) {require('deasync').sleep(1000);}
         processWorms(new_session_token);
-        while(!fileExists("./public/uploads/" + "processed-" + new_session_token + ".png")) {require('deasync').sleep(1000);}
+        while(!fileExists( current_path +  "/processed-" + new_session_token + ".png")) {require('deasync').sleep(1000);}
         find_contours(new_session_token,area_percent_image);
         
         res.redirect("/analyze/" + new_session_token);
@@ -157,44 +158,44 @@ router.post("/video_velocity/:token", function(req,res) {
     var area_percent_image = parseFloat(req.body.areapercent_velocity);
     var new_session_token = getRandomInt(1,1000000000).toString();
     var second_new_sessions_token = getRandomInt(1,1000000000).toString();
-    var proc = new ffmpeg("./public/uploads/" + "video-" + token + ".mp4")
+    var proc = new ffmpeg(current_path + "/../public/video/video-" + token + ".mp4")
     .takeScreenshots({
         count: 1,
         filename: "photo-" + new_session_token,
         timemarks: [start_time ] // number of seconds
-        }, "./public/uploads/", function(err) {
+        }, current_path, function(err) {
   });
-  var proc_two = new ffmpeg("./public/uploads/" + "video-" + token + ".mp4")
+  var proc_two = new ffmpeg(current_path + "/../public/video/video-" + token + ".mp4")
     .takeScreenshots({
         count: 1,
         filename: "photo-" + second_new_sessions_token,
         timemarks: [end_time ] // number of seconds
-        }, "./public/uploads/", function(err) {
+        }, current_path, function(err) {
   });
 
   //two images now created
-        while(!fileExists("./public/uploads/" + "photo-" + new_session_token + ".png") && !fileExists("./public/uploads/" + "photo-" + second_new_sessions_token + ".png")) {require('deasync').sleep(1000);}
+        while(!fileExists(current_path +  "/photo-" + new_session_token + ".png") && !fileExists(current_path +  "/photo-" + second_new_sessions_token + ".png")) {require('deasync').sleep(1000);}
         initial_process(new_session_token);
         initial_process(second_new_sessions_token);
-        while(!fileExists("./public/uploads/" + "output-" + new_session_token + ".png") && !fileExists("./public/uploads/" + "output-" + second_new_sessions_token + ".png")) {require('deasync').sleep(1000);}
+        while(!fileExists(current_path +  "/output-" + new_session_token + ".png") && !fileExists(current_path +  "/output-" + second_new_sessions_token + ".png")) {require('deasync').sleep(1000);}
         processWorms(new_session_token);
         processWorms(second_new_sessions_token);
-        while(!fileExists("./public/uploads/" + "processed-" + new_session_token + ".png") && !fileExists("./public/uploads/" + "processed-" + second_new_sessions_token + ".png")) {require('deasync').sleep(1000);}
+        while(!fileExists(current_path +  "/processed-" + new_session_token + ".png") && !fileExists(current_path +  "/processed-" + second_new_sessions_token + ".png")) {require('deasync').sleep(1000);}
         //two files are now created.
         
         get_velocity(new_session_token, second_new_sessions_token, time_between, area_percent_image);
-        var image_one_link = ("../uploads/" + "worms-" + new_session_token + ".png");
-        var image_two_link = ("../uploads/" + "worms-" + second_new_sessions_token + ".png");
+        var image_one_link = ("/images" +  "/worms-" + new_session_token + ".png");
+        var image_two_link = ("/images" +  "/worms-" + second_new_sessions_token + ".png");
         
         res.render("velocities", {image_one_link: image_one_link, image_two_link: image_two_link, image_one_width: im1w, image_one_height: im1h, image_two_width: im2w, image_two_height: im2h, velocities: velocities});
-        while(!fileExists("./public/uploads/" + "worms-" + new_session_token + ".png") && !fileExists("./public/uploads/" + "worms-" + second_new_sessions_token + ".png")) {require('deasync').sleep(1000);}
+        while(!fileExists( current_path +  "/worms-" + new_session_token + ".png") && !fileExists( current_path +  "/worms-" + second_new_sessions_token + ".png")) {require('deasync').sleep(1000);}
         //delete old files to keep room
-        fs.unlinkSync("./public/uploads/" + "photo-" + new_session_token + ".png");
-        fs.unlinkSync("./public/uploads/" + "photo-" + second_new_sessions_token + ".png");
-        fs.unlinkSync("./public/uploads/" + "output-" + new_session_token + ".png");
-        fs.unlinkSync("./public/uploads/" + "output-" + second_new_sessions_token + ".png");
-        fs.unlinkSync("./public/uploads/" + "processed-" + new_session_token + ".png");
-        fs.unlinkSync("./public/uploads/" + "processed-" + second_new_sessions_token + ".png");
+        fs.unlinkSync( current_path +  "/photo-" + new_session_token + ".png");
+        fs.unlinkSync( current_path +  "/photo-" + second_new_sessions_token + ".png");
+        fs.unlinkSync( current_path +  "/output-" + new_session_token + ".png");
+        fs.unlinkSync( current_path +  "/output-" + second_new_sessions_token + ".png");
+        fs.unlinkSync( current_path +  "/processed-" + new_session_token + ".png");
+        fs.unlinkSync( current_path +  "/processed-" + second_new_sessions_token + ".png");
 
 });
 
@@ -216,13 +217,13 @@ router.get("/video_velocity/:token", function(req,res) {
 
 function initial_process(session_token) {
     
-    Caman("./public/uploads/" + "photo-" + session_token + ".png", function () {
+    Caman( current_path +  "/photo-" + session_token + ".png", function () {
                 this.contrast(65);
                 this.hue(100);
                 this.vibrance(100);
                 this.greyscale();
                 this.render(function () {
-                    this.save("./public/uploads/" + "output-" + session_token + ".png");
+                    this.save( current_path +  "/output-" + session_token + ".png");
                 });
             });
     
@@ -230,7 +231,7 @@ function initial_process(session_token) {
 
 function processWorms(session_token) {
     
-    Jimp.read("./public/uploads/" + "output-" + session_token + ".png").then(function (pic) {
+    Jimp.read( current_path +  "/output-" + session_token + ".png").then(function (pic) {
         
         
     pic.scan(0, 0, pic.bitmap.width, pic.bitmap.height, function (x, y, idx) {
@@ -281,7 +282,7 @@ function processWorms(session_token) {
     });
         }
         
-         pic.write("./public/uploads/" + "processed-" + session_token + ".png"); // save 
+         pic.write( current_path +  "/processed-" + session_token + ".png"); // save 
 }).catch(function (err) {
     console.error(err);
 });
@@ -291,7 +292,7 @@ function processWorms(session_token) {
 function find_contours(session_token, area_percent) {
     
 
-  cv.readImage("./public/uploads/" + "processed-" + session_token + ".png", function(err, im){
+  cv.readImage( current_path +  "/processed-" + session_token + ".png", function(err, im){
       
     if (err) throw err;
     worm_array = [];
@@ -358,7 +359,7 @@ function find_contours(session_token, area_percent) {
 
 
 
-  big.save("./public/uploads/" + "worms-" + session_token + ".png");
+  big.save(current_path +  "/../public/images/worms-" + session_token + ".png");
 });
 }
 
@@ -374,7 +375,7 @@ function get_velocity(first_token, second_token, time, area_percent) {
     var image_two_positions = [];
     var velocity_array = [];
 
-    cv.readImage("./public/uploads/" + "processed-" + first_token + ".png", function(err, im){
+    cv.readImage(current_path +  "/processed-" + first_token + ".png", function(err, im){
     if (err) throw err;
     var width = im.width();
     var height = im.height();
@@ -417,10 +418,10 @@ function get_velocity(first_token, second_token, time, area_percent) {
      array_of_points = [];
     }
   }
-  big.save("./public/uploads/" + "worms-" + first_token + ".png");
+  big.save(current_path +  "/../public/images/worms-" + first_token + ".png");
 });
 
-    cv.readImage("./public/uploads/" + "processed-" + second_token + ".png", function(err, im){
+    cv.readImage(current_path +  "/processed-" + second_token + ".png", function(err, im){
     if (err) throw err;
     var width = im.width();
     var height = im.height();
@@ -463,7 +464,7 @@ function get_velocity(first_token, second_token, time, area_percent) {
      array_of_points = [];
     }
   }
-  big.save("./public/uploads/" + "worms-" + second_token + ".png");
+  big.save(current_path +  "/../public/images/worms-" + second_token + ".png");
 });
 //now have two position arrays of points in image_one_positions and image_two_positions
  var length_one = image_one_positions.length;

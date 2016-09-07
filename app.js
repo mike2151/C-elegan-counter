@@ -4,16 +4,11 @@ var cookieParser = require('cookie-parser');
 var expressValidator = require('express-validator');
 var bodyParser = require('body-parser');
 var flash = require('connect-flash');
-var requiresafe = require('requiresafe');
 var session = require('express-session');
 var passport = require('passport');
 var morgan = require('morgan')
 var helmet = require('helmet');
 var LocalStrategy = require('passport-local').Strategy;
-var mongo = require('mongodb');
-var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/wormtraq');
-var db = mongoose.connection;
 
 var routes = require('./routes/index');
 
@@ -91,7 +86,7 @@ app.use('/', routes);
 
 
 
-app.set('port', (process.env.PORT || 3000));
+app.set('port', (process.env.PORT || 2151));
 
 app.listen(app.get('port'), function () {
     console.log('Listening on port ' + app.get('port'));
