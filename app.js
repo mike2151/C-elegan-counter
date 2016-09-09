@@ -4,16 +4,8 @@ var cookieParser = require('cookie-parser');
 var expressValidator = require('express-validator');
 var bodyParser = require('body-parser');
 var flash = require('connect-flash');
-var requiresafe = require('requiresafe');
 var session = require('express-session');
-var passport = require('passport');
-var morgan = require('morgan')
-var helmet = require('helmet');
-var LocalStrategy = require('passport-local').Strategy;
-var mongo = require('mongodb');
-var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/wormtraq');
-var db = mongoose.connection;
+var morgan = require('morgan');
 
 var routes = require('./routes/index');
 
@@ -49,9 +41,7 @@ app.use(session({
     resave: true
 }));
 
-//passsport init
-app.use(passport.initialize());
-app.use(passport.session());
+
 
 
 app.use(expressValidator({
@@ -82,7 +72,6 @@ app.use(function (req, res, next) {
     res.locals.user = req.user || null;
     next();
 });
-app.use(helmet());
 
 
 

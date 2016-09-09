@@ -9,7 +9,6 @@
   "author": "mike abelar",
   "license": "MIT",
   "dependencies": {
-    "bcryptjs": "^2.3.0",
     "bluebird": "^3.4.1",
     "body-parser": "^1.15.0",
     "caman": "^4.1.2",
@@ -32,11 +31,10 @@
     "multer": "^1.2.0",
     "node-pre-gyp": "^0.6.30",
     "opencv": "^5.0.0",
-    "passport": "^0.3.2",
-    "passport-http-bearer": "^1.0.1",
-    "passport-local": "^1.0.0",
     "path": "^0.12.7",
-    "requiresafe": "^2.3.1",
     "sync": "^0.2.5"
+  },
+  "bin": {
+    "websoftware": "bin/websoftware.js"
   }
 }
