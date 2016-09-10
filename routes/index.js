@@ -51,11 +51,8 @@ router.get("/", function(req,res) {
     })
     .on('end', function () {
         if (item_count > 100) {
-        fse.emptyDir('./public/uploads', function (err) {
-            if (err) {
-                console.log('File not found!');
-            } 
-        });
+            fse.emptyDirSync('./public/uploads');
+            fs.closeSync(fs.openSync('./public/uploads/.keep', 'w'));
         }
     });
 
