@@ -84,7 +84,7 @@ router.post("/analyze", function(req,res) {
             res.redirect("/analyze");
         }
 
-        var area_percent = req.body.area_percent;
+        var area_percent = parseFloat(req.body.area_percent);
 
         initial_process(session_token);
         while(!fileExists("./public/uploads/" + "output-" + session_token + ".png")) {require('deasync').sleep(1000);}
