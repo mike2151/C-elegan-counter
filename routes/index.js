@@ -50,7 +50,7 @@ router.get("/", function(req,res) {
         item_count = item_count + 1;
     })
     .on('end', function () {
-        if (item_count > 100) {
+        if (item_count > 50) {
             fse.emptyDirSync('./public/uploads');
             fs.closeSync(fs.openSync('./public/uploads/.keep', 'w'));
         }
