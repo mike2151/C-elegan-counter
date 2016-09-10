@@ -1,5 +1,5 @@
 https://github.com/erhhung/heroku-buildpack-opencv
-https://github.com/mcollina/heroku-buildpack-graphicsmagick.git
+https://github.com/jjuster/heroku-buildpack-libpng
 https://github.com/a2ikm/heroku-buildpack-libjpeg62.git
 https://github.com/mojodna/heroku-buildpack-cairo.git
 https://github.com/heroku/heroku-buildpack-nodejs#v83
