@@ -35,6 +35,7 @@
 						<li><a href="/analyze">Picture</a></li>
 						<li><a href="/measure">Measure</a></li>
 						<li><a href="/video">Video</a></li>
+						<li><a href="/config">Config</a></li>
 						<li  class="current"><a href="/about">About</a></li>
 					</ul>
 				</nav>
@@ -51,6 +52,42 @@
                                        <p style="font-size: 1.4em">WormTraq is an open source online web application which is able to track Caenorhabditis elegans. 
                                            <br><br>Note: Since WormTraq is a free service, the media generated from the analysis tools may be deleted at any moment to conserve space. Make sure to download all images and media generated from WormTraq. </p>
                                        <br>
+									<div id="method">
+									   <h1 style="font-size: 2.3em" >Methodology</h1>
+                                       <p style="font-size: 1.4em">WormTraq processes the uploaded image before extracting the worms using the following process:
+										<br>
+										</p>
+										<img src="images/main.jpeg" width="25%" height="25%">
+										<p>The user uploads an image of worms</p>
+										<img src="images/arrow.png" width="5%" height="5%">
+										<br>
+										<img src="images/output.png" width="25%" height="25%">
+										<p>WormTraq initially processes the image. First, the image is contrasted. Then, the hue in the image is increased significantly.
+											Finally, the vibrance of the image is increased significantly. Once these filters are applied to the image, it is converted to grayscale as shown above.
+										</p>
+										<img src="images/arrow.png" width="5%" height="5%">
+										<br>
+										<img src="images/processed.png" width="25%" height="25%">
+										<p>WormTraq will then remove the noise in the image. Noise is the groups various dots which show up
+											after the initial processing. This step will help in removing false positives. 
+										</p>
+										<img src="images/arrow.png" width="5%" height="5%">
+										<br>
+										<img src="images/worms.png" width="25%" height="25%">
+										<p>Finally, WormTraq will identify the various worms in the image based 
+											on the area percent threshold. The area percent threshold tells WormTraq the minimum size which a worm should be. 
+											WormTraq then scans the image for coherent lines joining to form a worm. Once enough lines connect in a potential object, an enclosed worm is recorded. 
+											Measurements are then recorded as shown above.
+										</p>
+								</div>
+
+
+
+
+
+									   
+                                       <br>
+
                                        <h1 style="font-size: 2.3em">Tutorial</h1>
                                        <p style="font-size: 1.4em">Coming soon!</p>
                                         <br>

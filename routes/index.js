@@ -18,6 +18,8 @@ var worm_array;
 var velocity_array;
 var im1w, im1h, im2w, im2h;
 var velocities = [];
+var global_image_one_positions = [];
+var global_image_two_positions = [];
 
 var storage =   multer.diskStorage({
   destination: function (req, file, callback) {
@@ -80,18 +82,44 @@ router.post("/analyze", function(req,res) {
         if(err) {
             res.redirect("/analyze");
         }
-
         var area_percent = parseFloat(req.body.area_percent);
+        var contrast = parseInt(req.body.contrast);
+        var hue = parseInt(req.body.hue);
+        var vibrance = parseInt(req.body.vibrance);
+        var noise = parseInt(req.body.noise);
 
-        initial_process(session_token);
+        initial_process(session_token, contrast, hue, vibrance);
         while(!fileExists("./public/uploads/" + "output-" + session_token + ".png")) {require('deasync').sleep(1000);}
-        processWorms(session_token);
+        processWorms(session_token, noise);
         while(!fileExists("./public/uploads/" + "processed-" + session_token + ".png")) {require('deasync').sleep(1000);}
         find_contours(session_token, area_percent);
         
         res.redirect("/analyze/" + session_token);
     });
 });
+
+router.post("/config", function(req,res) {
+    upload(req,res,function(err) {
+        if(err) {
+            res.redirect("/config");
+        }
+        var area_percent = parseFloat(req.body.area_percent);
+        var contrast = parseInt(req.body.contrast);
+        var hue = parseInt(req.body.hue);
+        var vibrance = parseInt(req.body.vibrance);
+        var noise = parseInt(req.body.noise);
+
+        
+        initial_process(session_token, contrast, hue, vibrance);
+        while(!fileExists("./public/uploads/" + "output-" + session_token + ".png")) {require('deasync').sleep(1000);}
+        processWorms(session_token, noise);
+        while(!fileExists("./public/uploads/" + "processed-" + session_token + ".png")) {require('deasync').sleep(1000);}
+        find_contours(session_token, area_percent);
+        
+        res.redirect("/analyze/" + session_token);
+    });
+});
+
 
 router.get("/analyze/:token", function(req,res) {
     var token = req.params.token;
@@ -127,6 +155,12 @@ router.get("/video_analyze/:token", function(req,res) {
 router.post("/video_analyze/:token", function(req,res) {
     var token = req.params.token;
     var time_point = req.body.time;
+
+    var contrast = parseInt(req.body.contrast);
+    var hue = parseInt(req.body.hue);
+    var vibrance = parseInt(req.body.vibrance);
+    var noise = parseInt(req.body.noise);
+
     var area_percent_image = parseFloat(req.body.areapercent);
     var new_session_token = getRandomInt(1,1000000000).toString();
     var proc = new ffmpeg("./public/uploads/" + "video-" + token + ".mp4")
@@ -137,9 +171,9 @@ router.post("/video_analyze/:token", function(req,res) {
         }, "./public/uploads/", function(err) {
   });
         while(!fileExists("./public/uploads/" + "photo-" + new_session_token + ".png")) {require('deasync').sleep(1000);}
-        initial_process(new_session_token);
+        initial_process(new_session_token, contrast, hue, vibrance);
         while(!fileExists("./public/uploads/" + "output-" + new_session_token + ".png")) {require('deasync').sleep(1000);}
-        processWorms(new_session_token);
+        processWorms(new_session_token, noise);
         while(!fileExists("./public/uploads/" + "processed-" + new_session_token + ".png")) {require('deasync').sleep(1000);}
         find_contours(new_session_token,area_percent_image);
         
@@ -151,6 +185,12 @@ router.post("/video_velocity/:token", function(req,res) {
     var start_time = req.body.start_time;
     var end_time = req.body.end_time;
     var time_between = end_time - start_time;
+
+    var contrast = parseInt(req.body.contrast_v);
+    var hue = parseInt(req.body.hue_v);
+    var vibrance = parseInt(req.body.vibrance_v);
+    var noise = parseInt(req.body.noise_v);
+
     var area_percent_image = parseFloat(req.body.areapercent_velocity);
     var new_session_token = getRandomInt(1,1000000000).toString();
     var second_new_sessions_token = getRandomInt(1,1000000000).toString();
@@ -171,11 +211,11 @@ router.post("/video_velocity/:token", function(req,res) {
 
   //two images now created
         while(!fileExists("./public/uploads/" + "photo-" + new_session_token + ".png") && !fileExists("./public/uploads/" + "photo-" + second_new_sessions_token + ".png")) {require('deasync').sleep(1000);}
-        initial_process(new_session_token);
-        initial_process(second_new_sessions_token);
+        initial_process(new_session_token, contrast, hue, vibrance);
+        initial_process(second_new_sessions_token, contrast, hue, vibrance);
         while(!fileExists("./public/uploads/" + "output-" + new_session_token + ".png") && !fileExists("./public/uploads/" + "output-" + second_new_sessions_token + ".png")) {require('deasync').sleep(1000);}
-        processWorms(new_session_token);
-        processWorms(second_new_sessions_token);
+        processWorms(new_session_token, noise);
+        processWorms(second_new_sessions_token, noise);
         while(!fileExists("./public/uploads/" + "processed-" + new_session_token + ".png") && !fileExists("./public/uploads/" + "processed-" + second_new_sessions_token + ".png")) {require('deasync').sleep(1000);}
         //two files are now created.
         
@@ -183,7 +223,7 @@ router.post("/video_velocity/:token", function(req,res) {
         var image_one_link = ("../uploads/" + "worms-" + new_session_token + ".png");
         var image_two_link = ("../uploads/" + "worms-" + second_new_sessions_token + ".png");
         
-        res.render("velocities", {image_one_link: image_one_link, image_two_link: image_two_link, image_one_width: im1w, image_one_height: im1h, image_two_width: im2w, image_two_height: im2h, velocities: velocities});
+        res.render("velocities", {image_one_link: image_one_link, image_two_link: image_two_link, image_one_width: im1w, image_one_height: im1h, image_two_width: im2w, image_two_height: im2h, velocities: velocities, image_one_positions: global_image_one_positions, image_two_positions: global_image_two_positions});
         while(!fileExists("./public/uploads/" + "worms-" + new_session_token + ".png") && !fileExists("./public/uploads/" + "worms-" + second_new_sessions_token + ".png")) {require('deasync').sleep(1000);}
         //delete old files to keep room
         fs.unlinkSync("./public/uploads/" + "photo-" + new_session_token + ".png");
@@ -199,6 +239,9 @@ router.get("/video_velocity/:token", function(req,res) {
     res.redirect("/video");
 });
 
+router.get("/config", function(req,res) {
+    res.render("config_img");
+});
 
 
 
@@ -211,12 +254,13 @@ router.get("/video_velocity/:token", function(req,res) {
 
 
 
-function initial_process(session_token) {
+
+function initial_process(session_token, contrast, hue, vibrance) {
     
     Caman("./public/uploads/" + "photo-" + session_token + ".png", function () {
-                this.contrast(65);
-                this.hue(100);
-                this.vibrance(100);
+                this.contrast(contrast);
+                this.hue(hue);
+                this.vibrance(vibrance);
                 this.greyscale();
                 this.render(function () {
                     this.save("./public/uploads/" + "output-" + session_token + ".png");
@@ -225,7 +269,7 @@ function initial_process(session_token) {
     
 }
 
-function processWorms(session_token) {
+function processWorms(session_token, noise) {
     
     Jimp.read("./public/uploads/" + "output-" + session_token + ".png").then(function (pic) {
         
@@ -242,7 +286,7 @@ function processWorms(session_token) {
             }
         });
 
-        for (var i = 0; i<20; i++) {
+        for (var i = 0; i<noise; i++) {
         //goes through each pixel
         pic.scan(0, 0, pic.bitmap.width, pic.bitmap.height, function (x, y, idx) {
              var red   = this.bitmap.data[ idx + 0 ];
@@ -463,6 +507,8 @@ function get_velocity(first_token, second_token, time, area_percent) {
   big.save("./public/uploads/" + "worms-" + second_token + ".png");
 });
 //now have two position arrays of points in image_one_positions and image_two_positions
+ global_image_one_positions = image_one_positions;
+ global_image_two_positions = image_two_positions;
  var length_one = image_one_positions.length;
  var length_two = image_two_positions.length;
  if (length_one > length_two) {

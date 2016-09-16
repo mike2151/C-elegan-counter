@@ -22,7 +22,7 @@
 				<header id="header">
 					<div class="logo container">
 						<div>
-							<h1><a id="logo">Analyze Pictures</h1>
+							<h1><a id="logo">Configure Picture Settings</h1>
 						</div>
 					</div>
                     
@@ -32,10 +32,10 @@
 				<nav id="nav">
 					<ul>
 						<li><a href="/">Home</a></li>
-						<li class="current"><a href="/analyze">Picture</a></li>
+						<li><a href="/analyze">Picture</a></li>
 						<li><a href="/measure">Measure</a></li>
 						<li><a href="/video">Video</a></li>
-						<li><a href="/config">Config</a></li>
+						<li class="current"><a href="/config">Config</a></li>
 						<li><a href="/about">About</a></li>
 					</ul>
 				</nav>
@@ -50,15 +50,16 @@
 									<section class="box highlight">
                                         <h4>About</h4>
                                         <hr>
-                                        <p>The Picture Analysis tool allows you to upload a picture of C. Elegans along with an object detection parameter.
-                                            The picture will be processed and will return a count of the worms, the lengths of the worms, the area of worms, along with the width and height of a surrounding border for each worm.
+                                        <p>WormTraq preprocesses images (see the about page) before identifying and measuring the worms. The default processesing settings
+											are configuring for certain color settings. However, the lighting or the type of images may change at different times. 
+											This page is designed to test your images and figure out the ideal parameters for image processing.
                                         </p>
                                         <br>
                                         <h4>Instructions</h4>
                                         <hr>
-                                        <p>Fill out the form (1 file upload and 1 object detection parameter) and click "process image"</p>
+                                        <p>Fill out the form below</p>
                                         <br>
-										<form method="post" action="/analyze" enctype="multipart/form-data"> 
+										<form method="post" action="/config" enctype="multipart/form-data"> 
                                         <div class="form-group">
 
                                             <label><h4>Image File</h4></label>
@@ -71,13 +72,14 @@
                                                  A smaller percentage will detect more objects but increase the number of false positives. 
                                                  A larger percentage will detect fewer objects while picking up less false positives. However, some objects must be ignored. Suggested: .002</p>
                                             <br>
-                                            <center><input type="text" class="form-control" name="area_percent" style="width: 8em"></center><br>
+                                            <center><input type="text" class="form-control" name="area_percent" style="width: 8em"></center>
+                                            <br>
 											<hr>
 											<label><h4>Processing Settings</h4></label>
 											<hr>
 											<br>
 											<label><h4>Contrast (1-100)</h4></label>
-											<center><input type="number" class="form-control" name="contrast" value="65" style="width: 8em"/></center>
+											<center><input type="number" class="form-control" name="contrast" value="65" style="width: 8em" /></center>
 											<br>
 											<label><h4>Hue (1-100)</h4></label>
 											<center><input type="number" class="form-control" name="hue" value="100" style="width: 8em"/></center>
@@ -87,7 +89,7 @@
 											<br>
 											<label><h4>Noise Removal Cycles (Any positive integer)</h4></label>
 											<center><input type="number" class="form-control" name="noise" value="20" style="width: 8em"/></center>
-                                            <br>
+											<br>
 										    <input type="submit" value="Process Image" name="submit">
                                             
                                         </div>
