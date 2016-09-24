@@ -108,7 +108,6 @@ router.post("/config", function(req,res) {
         var hue = parseInt(req.body.hue);
         var vibrance = parseInt(req.body.vibrance);
         var noise = parseInt(req.body.noise);
-
         
         initial_process(session_token, contrast, hue, vibrance);
         while(!fileExists("./public/uploads/" + "output-" + session_token + ".png")) {require('deasync').sleep(1000);}
@@ -116,7 +115,7 @@ router.post("/config", function(req,res) {
         while(!fileExists("./public/uploads/" + "processed-" + session_token + ".png")) {require('deasync').sleep(1000);}
         find_contours(session_token, area_percent);
         
-        res.redirect("/analyze/" + session_token);
+        res.redirect("/analyze_config/" + session_token + "/" + contrast + "/" + hue + "/" + vibrance + "/" + noise);
     });
 });
 
@@ -130,6 +129,22 @@ router.get("/analyze/:token", function(req,res) {
     var image_link = ("../uploads/" + "worms-" + token + ".png");
 
     res.render("analyze_image", {image_link: image_link, image_width: image_width, image_height: image_height, worm_array: worm_array});
+});
+
+router.get("/analyze_config/:token/:contrast/:hue/:vib/:noise", function(req,res) {
+    var token = req.params.token;
+    var contrast = req.params.contrast;
+    var hue = req.params.hue;
+    var vib = req.params.vib;
+    var noise = req.params.noise;
+    
+    if (fileExists("./public/uploads/" + "photo-" + token + ".png")){fs.unlinkSync("./public/uploads/" + "photo-" + token + ".png");}
+    if (fileExists("./public/uploads/" + "output-" + token + ".png")){fs.unlinkSync("./public/uploads/" + "output-" + token + ".png");}
+    if (fileExists("./public/uploads/" + "processed-" + token + ".png")){fs.unlinkSync("./public/uploads/" + "processed-" + token + ".png");}
+
+    var image_link = ("../../../../../uploads/" + "worms-" + token + ".png");
+
+    res.render("analyze_image_config", {image_link: image_link, image_width: image_width, image_height: image_height, worm_array: worm_array, hue: hue, contrast: contrast, vib: vib, noise: noise});
 });
 
 

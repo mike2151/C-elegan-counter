@@ -10,7 +10,7 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
-		<link rel="stylesheet" href="../css/main.css" />
+		<link rel="stylesheet" href="../../../../../css/main.css" />
 		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
         <style type="text/css">
             .tg  {border-collapse:collapse;border-spacing:0;border-color:#bbb;}
@@ -38,10 +38,10 @@
 				<nav id="nav">
 					<ul>
 						<li><a href="/">Home</a></li>
-						<li class="current"><a href="/analyze">Picture</a></li>
+						<li><a href="/analyze">Picture</a></li>
 						<li><a href="/measure">Measure</a></li>
 						<li><a href="/video">Video</a></li>
-						<li><a href="/config">Config</a></li>
+						<li  class="current"><a href="/config">Config</a></li>
 						<li><a href="/about">About</a></li>
 					</ul>
 				</nav>
@@ -79,8 +79,26 @@
                                             
                                         </table>
 										<br>
-									
-                                                                                    
+										<h1 style="font-size: 5em !important; padding-top: 5%">Configuration Values</h1>
+                                        <table class="tg">
+                                            <tr>
+                                                <th class="tg-fbrz">Contrast </th>
+                                                <th class="tg-fbrz">Hue</th>
+                                                <th class="tg-fbrz">Vibrance</th>
+                                                <th class="tg-fbrz">Noise</th>
+                                            </tr>
+                                           
+                                            <tr>
+                                                <td class="tg-bzci"><%= contrast %></td>
+                                                <td class="tg-bzci"><%= hue %></td>
+                                                <td class="tg-bzci"><%= vib %></td>
+                                                <td class="tg-bzci"><%= noise %></td>
+                                      
+                                            </tr>
+                                            
+                                            
+                                        </table>
+                                        <p><a href="/config">Back To Config</a></p>                                          
                                         <p>Not get what you want? Try the <a href="/measure">Measuring</a> tool.</p>
 									</section>
 							</div>
