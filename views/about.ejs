@@ -88,8 +88,31 @@
 									   
                                        <br>
 
+
+<!-- tutorial -->
                                        <h1 style="font-size: 2.3em">Tutorial</h1>
-                                       <p style="font-size: 1.4em">Coming soon!</p>
+                                       <p style="font-size: 1.4em"><iframe width="854" height="480" src="https://www.youtube.com/embed/FptPGp2E5Xs" frameborder="0" allowfullscreen></iframe>
+									   <br>
+									   <h1 style="font-size: 1.5em">Get Started</h1>
+									   To get started, first decide what you are looking to analyze. If you are looking to analyze an image, click on <b>PICTURE</b> or <b>MEASURE</b> to begin.
+									   The PICTURE works by uploading a picture of C. Elegans and then returning data regarding the image. The data returned includes the midline lengths of the worms, the number of worms, and the areas of the worms in the image.
+									   The MEASURE tab works by taking an image and allowing one to draw on the image, recording the length of the line. This can be used to make percise measurements of worms in an image.
+									   The <b>VIDEO</b> tab offers the same features as the picture tab just with specific snapshots of the video. In addition, there is a simple velocity calculator for two points in an image of the video.
+									   The <b>CONFIG</b> tab is for configuring the image processing settings. The methodology section above explains how WormTraq processes images. There are 5 main settings which go into identifying and measuring C. Elegans.
+									   <br><br>
+									   <ol>
+										   <li><b>1. Detection Threshold: </b>The minimum percentage for which WormTraq will classify an object as a worm. The larger the percentage, the less false positives. The larger, the more potential objects WormTraq will not pick up.</li>
+										   <br> <b><li>2. Contrast: </b>How the image is contrasted in order to better seperate light colors from dark colors</li>
+											<br> <b><li>3. Hue:</b> Similar effects to contrast.</li>
+											 <br><b><li>4. Vibrance:</b> Similar effects to contrast.</li>
+											 <br> <b> <li>5. Noise Cycles: </b>WormTraq removes image noise (little dots or isolated dots which appear in the greyscaled image) a certain amount of iterations. The fewer the iterations, the less noise removed, allowing more false positives. The higher the number, the less defined an object like a worm becomes, reducing the chance that it will be correctly identified.</li>
+
+									   </ol>
+									   <br>
+									   All of the aforementioned information is explained in the video tutorial in case of any confusion.
+									   	</p>
+
+
                                         <br>
                                        <h1 style="font-size: 2.3em">Contributing to WormTraq</h1>
                                        <p style="font-size: 1.4em">If you wish to improve WormTraq or have any suggestions for features, 
