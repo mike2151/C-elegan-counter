@@ -13,6 +13,8 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
 		<link rel="stylesheet" href="css/main.css" />
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
 		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
 	</head>
 	<body class="homepage">
@@ -23,7 +25,7 @@
 					<div class="logo container">
 						<div>
 							<h1><a id="logo">Analyze Video</h1>
-						</div>
+						</div> 
 					</div>
                     
 				</header>
@@ -48,19 +50,34 @@
 							<div class="12u">
 								<!-- Highlight -->
 									<section class="box highlight">
+										<div class="col-md-6">
                                         <h4>About</h4>
                                         <hr>
                                         <p>The Video Analysis Tool allows you to take a video and perform image analysis on any given frame.
                                             In addition, you can calculate the velocity of an object between frames.
+											<br>
+											<br>
+											<H4>NOTE: MP4 FILES ARE THE ONLY SUPPORTED VIDEO FORMAT</H4>
+											<br>
+											<br>
+											To convert video files to mp4, we suggest one of the following online video converters:<br>
+											<ul>
+												<li><a href="https://www.onlinevideoconverter.com/">www.onlinevideoconverter.com</a><li>
+												<li><a href="http://video.online-convert.com/convert-to-mp4">video.online-convert.com/convert-to-mp4</a><li>
+												<li><a href="http://convert-video-online.com/">convert-video-online.com/</a><li>
+											</ul>
                                         </p>
-                                        <br>
+										</div>
+                                        <div class="col-md-6">
                                         <h4>Instructions</h4>
                                         <hr>
-                                        <p>Upload the video</p>
-                                        <br>
+                                        <p>Upload a mp4 video to proceed</p>
+                                        </div>
+										<div class="col-md-12">
+											<br>
 										<form method="post" action="/video" enctype="multipart/form-data"> 
                                         
-                                            <label><h4>Video File</h4></label>
+                                            <label><h2>Upload </h2></label>
                                             <hr>
                                             <center><div id="yourBtn" style="height: 50px; width: 150px;border: 1px dashed #BBB; cursor:pointer;" onclick="getFile()">Upload Video File</div>
                                             <div style='height: 0px;width: 0px; overflow:hidden;'><input type="file" value="upload" id="upfile" name="video" accept="video/mp4,video/x-m4v,video/*"/></div></center>
@@ -69,7 +86,7 @@
                                             
                                         
 										</form>
-                                        
+                                        </div>
                                         
 									</section>
 							</div>

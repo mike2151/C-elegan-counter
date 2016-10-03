@@ -14,6 +14,7 @@
 		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
         <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
         <script type="text/javascript" src="https://rawgit.com/allensarkisyan/VideoFrame/master/VideoFrame.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
 	</head>
 	<body class="homepage">
@@ -49,24 +50,26 @@
 							<div class="12u">
 								<!-- Highlight -->
 							    <section class="box highlight">
-                                    
+                                    <h2>Uploaded Video:</h2>
                                     <video height="30%" width="100%" id="video" controls> 
                                     <source src="<%= video_path %>"></source>
                                     </video>
                                     <br>
                                     <br>
-                                    <h4>Process Image at Video Timestamp (May take a while)</h4>
+                                    <h3>Process Image at Video Timestamp (May take a while)</h3>
                                     <hr>
                                     <form method="post" action="/video_analyze/<%= token %>">
                                         <div class="form-group">
+										<div class="col-md-6">	
+											<h4>Process at timestamp in video</h4>
                                         <label>Time at video (Seconds)</label>
-                                        <input type="number" class="form-control" name="time" >
-                                        <br><br>
-                                        <label>Detection Threshold (%). See the Picture Analysis Tool for more information</label>
+                                       <center> <input type="number" class="form-control" name="time" style="width:15%"></center>
+                                        </div>
+										<div class="col-md-6">	
+											<h4>Optional Processing Settings</h4>
+                                        <label>Detection Threshold (%)</label>
                                         <center><input type="text" style="width:15%" class="form-control" placeholder=".002" name="areapercent" ></center>
-										<br><hr>
-											<label><h4>Processing Settings</h4></label>
-											<hr>
+										
 											<br>
 											<label><h4>Contrast (1-100)</h4></label>
 											<center><input type="number" class="form-control" name="contrast" value="65" style="width: 8em"/></center>
@@ -79,29 +82,31 @@
 											<br>
 											<label><h4>Noise Removal Cycles (Any positive integer)</h4></label>
 											<center><input type="number" class="form-control" name="noise" value="20" style="width: 8em"/></center>
-                                        </div><br>
+                                        </div></div><br>
                                         <button type="submit" class="btn btn-success" onclick="loading()">Process</button>
                                     </form>
 
+                                    <div class="col-md-12">
                                     <br>
-                                    <br>
-                                    <h4>Get Velocity of Objects (May take a while)</h4>
+									<hr>
+                                    <h3>Get Velocity of Objects (May take a while)</h3>
                                     <hr>
                                     <form method="post" action="/video_velocity/<%= token %>">
-                                        <div class="form-group">
+										<div class="col-md-6">
+                                        <h4>Time frames for average velocity</h4>
                                         <label>Start Time at video (Seconds)</label>
-                                        <input type="number" class="form-control" name="start_time" >
+                                        <center><input type="number" class="form-control" name="start_time" style="width:15%"></center>
                                         <br><br>
 										<label>End Time at video (Seconds)</label>
-                                        <input type="number" class="form-control" name="end_time" >
-                                        <br><br>
-                                        <label>Detection Threshold (%). See the Picture Analysis Tool for more information</label>
+                                        <center><input type="number" class="form-control" name="end_time" style="width:15%"></center>
+										</div>
+										<div class="col-md-6">
+											<h4>Optional Processing Settings</h4>
+                                        <label>Detection Threshold (%)</label>
                                         <center><input type="text" style="width:15%" class="form-control" placeholder=".002" name="areapercent_velocity" ></center>
-                                        </div>
-										<br>
-										<hr>
-											<label><h4>Processing Settings</h4></label>
-											<hr>
+                                        
+										
+									
 											<br>
 											<label><h4>Contrast (1-100)</h4></label>
 											<center><input type="number" class="form-control" name="contrast_v" value="65" style="width: 8em"/></center>
@@ -114,8 +119,10 @@
 											<br>
 											<label><h4>Noise Removal Cycles (Any positive integer)</h4></label>
 											<center><input type="number" class="form-control" name="noise_v" value="20" style="width: 8em"/></center><br>
-                                        <button type="submit" class="btn btn-success" onclick="loading()">Process</button>
+                                       </div>
+									    <button type="submit" class="btn btn-success" onclick="loading()">Process</button>
                                     </form>
+									</div>
 									<h2 id="load_status" style="color: #ff0000"></h2>
 
                                     

@@ -237,8 +237,8 @@ router.post("/video_velocity/:token", function(req,res) {
         get_velocity(new_session_token, second_new_sessions_token, time_between, area_percent_image);
         var image_one_link = ("../uploads/" + "worms-" + new_session_token + ".png");
         var image_two_link = ("../uploads/" + "worms-" + second_new_sessions_token + ".png");
-        
-        res.render("velocities", {image_one_link: image_one_link, image_two_link: image_two_link, image_one_width: im1w, image_one_height: im1h, image_two_width: im2w, image_two_height: im2h, velocities: velocities, image_one_positions: global_image_one_positions, image_two_positions: global_image_two_positions});
+        var time_var = start_time.toString() + " - " + end_time.toString() + " seconds";
+        res.render("velocities", {image_one_link: image_one_link, image_two_link: image_two_link, image_one_width: im1w, image_one_height: im1h, image_two_width: im2w, image_two_height: im2h, velocities: velocities, image_one_positions: global_image_one_positions, image_two_positions: global_image_two_positions, time_var: time_var});
         while(!fileExists("./public/uploads/" + "worms-" + new_session_token + ".png") && !fileExists("./public/uploads/" + "worms-" + second_new_sessions_token + ".png")) {require('deasync').sleep(1000);}
         //delete old files to keep room
         fs.unlinkSync("./public/uploads/" + "photo-" + new_session_token + ".png");

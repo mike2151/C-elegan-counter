@@ -13,6 +13,8 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
 		<link rel="stylesheet" href="css/main.css" />
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
 		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
 	</head>
 	<body class="homepage">
@@ -48,35 +50,44 @@
 							<div class="12u">
 								<!-- Highlight -->
 									<section class="box highlight">
+										<div class="col-md-6">
                                         <h4>About</h4>
                                         <hr>
                                         <p>WormTraq preprocesses images (see the about page) before identifying and measuring the worms. The default processesing settings
-											are configuring for certain color settings. However, the lighting or the type of images may change at different times. 
-											This page is designed to test your images and figure out the ideal parameters for image processing.
+											are configured for certain color settings. However, the lighting or the type of images may vary.
+											This page is designed to test your images and figure out the ideal processing parameters for image processing.
                                         </p>
-                                        <br>
+                                        
+										</div>
+										<div class="col-md-6">
                                         <h4>Instructions</h4>
                                         <hr>
-                                        <p>Fill out the form below</p>
+                                        <p>Upload an image. Then fill out the optional processing form. Click "Process Image" when completed.</p>
+										</div>
+										<div class="col-md-12">
                                         <br>
+										<hr>
+										<h1>Configure Image</h1>
+										<hr>
+											<br>
 										<form method="post" action="/config" enctype="multipart/form-data"> 
                                         <div class="form-group">
-
+											<div class="col-md-6">
                                             <label><h4>Image File</h4></label>
                                             <hr>
                                             <center><div id="yourBtn" style="height: 50px; width: 150px;border: 1px dashed #BBB; cursor:pointer;" onclick="getFile()">Upload Image</div>
                                             <div style='height: 0px;width: 0px; overflow:hidden;'><input type="file" value="upload" id="upfile" name="photo" accept="image/*" /></div></center>
-                                            <br>
+                                            </div>
+											<div class="col-md-6">
+												<label><h4>Optional Processing Settings</h4></label>
+											<hr>
+											<br>
+											<br>
                                              <label><h4>Detection Threshold (%)</h4></label>
-                                             <p>The minimum percentage of the total picture size that the detected object should take up. 
-                                                 A smaller percentage will detect more objects but increase the number of false positives. 
-                                                 A larger percentage will detect fewer objects while picking up less false positives. However, some objects must be ignored. Suggested: .002</p>
-                                            <br>
+                                             <br>
                                             <center><input type="text" placeholder=".002" class="form-control" name="area_percent" style="width: 8em"></center>
                                             <br>
-											<hr>
-											<label><h4>Processing Settings</h4></label>
-											<hr>
+										
 											<br>
 											<label><h4>Contrast (1-100)</h4></label>
 											<center><input type="number" class="form-control" name="contrast" value="65" style="width: 8em" /></center>
@@ -90,10 +101,23 @@
 											<label><h4>Noise Removal Cycles (Any positive integer)</h4></label>
 											<center><input type="number" class="form-control" name="noise" value="20" style="width: 8em"/></center>
 											<br>
+											</div>
+										</div>
 										    <input type="submit" value="Process Image" name="submit">
-                                            
+                                            </form>
+                                        <br>
+										<h3>Processing Variables</h3>
+										<hr>
+										<ol>
+										   <li><b>1. Detection Threshold: </b>The minimum percentage for which WormTraq will classify an object as a worm. The larger the percentage, the less false positives. The larger, the more potential objects WormTraq will not pick up.</li>
+										   <br> <b><li>2. Contrast: </b>How the image is contrasted in order to better seperate light colors from dark colors</li>
+											<br> <b><li>3. Hue:</b> Similar effects to contrast.</li>
+											 <br><b><li>4. Vibrance:</b> Similar effects to contrast.</li>
+											 <br> <b> <li>5. Noise Cycles: </b>WormTraq removes image noise (little dots or isolated dots which appear in the greyscaled image) a certain amount of iterations. The fewer the iterations, the less noise removed, allowing more false positives. The higher the number, the less defined an object like a worm becomes, reducing the chance that it will be correctly identified.</li>
+
+									   </ol>
                                         </div>
-										</form>
+										
                                         
                                         
 									</section>
