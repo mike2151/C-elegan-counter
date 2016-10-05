@@ -532,17 +532,22 @@ function get_velocity(first_token, second_token, time, area_percent) {
  if (length_one < length_two) {
      image_two_positions = image_two_positions.slice(0,length_one-1);
  }
+
  //now equal length
  for (var i = 0; i < image_one_positions.length; i++) {
-     var x1 = image_one_positions[i].x;
-     var y1 = image_one_positions[i].y;
-     var x2 = image_two_positions[i].x;
-     var y2 = image_two_positions[i].y;
+     //check to see if each exits
+     if (image_one_positions[i] != null && image_two_positions[i] != null){
+         var x1 = image_one_positions[i].x;
+        var y1 = image_one_positions[i].y;
+        var x2 = image_two_positions[i].x;
+        var y2 = image_two_positions[i].y;
 
-     var displacement = Math.sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2) );
-     var velocity = displacement / time;
+        var displacement = Math.sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2) );
+        var velocity = displacement / time;
+        
+        velocity_array.push(velocity);
+    }
      
-     velocity_array.push(velocity);
  }
 
  im1w = image_one_width;
