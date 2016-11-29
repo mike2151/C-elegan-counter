@@ -365,7 +365,6 @@ function find_contours(session_token, area_percent) {
     var GREEN = [0, 255, 0]; // B, G, R
     var WHITE = [255, 255, 255]; // B, G, R
     var RED   = [0, 0, 255]; // B, G, R
-    var YELLOW = [0, 255, 255];
 
     var worm_contours = [];
 
@@ -382,68 +381,35 @@ function find_contours(session_token, area_percent) {
     var contours = im_canny.findContours();
 
     for(i = 0; i < contours.size(); i++) {
-        if(contours.area(i) > maxArea) {
+    if(contours.area(i) > maxArea) {
 
 
-        worm_contours.push(i);
-        var moments = contours.moments(i);
-        var cgx = Math.round(moments.m10 / moments.m00);
-        var cgy = Math.round(moments.m01 / moments.m00);
-        big.drawContour(contours, i, GREEN);
+      worm_contours.push(i);
+      var moments = contours.moments(i);
+      var cgx = Math.round(moments.m10 / moments.m00);
+      var cgy = Math.round(moments.m01 / moments.m00);
+      big.drawContour(contours, i, GREEN);
 
 
-        //getting two end poiints of worm
-        var greatest_difference = {point_one: [0,0], point_two: [0,0], distance: 0};
-        //var d = Math.sqrt( (x2-=x1)*x2 + (y2-=y1)*y2 );
-            for(var j = 0; j < contours.cornerCount(i); ++j) {
-                var first_point = contours.point(i, j);
-                
-                for(var k = 0; k < contours.cornerCount(i); ++k ) {
-                    var second_point = contours.point(i, k);
-                    var temp_distance = Math.sqrt( (first_point.x-second_point.x)*(first_point.x-second_point.x) + (first_point.y-second_point.y)*(first_point.y-second_point.y) );
-                    if (temp_distance > greatest_difference.distance) {
-                        greatest_difference = {point_one: [first_point.x,first_point.y], point_two: [second_point.x,second_point.y], distance: temp_distance}
-                        
-                    }
-                }
-            }
+      var array_of_points = contours.boundingRect(i);
+      var point1 = [array_of_points["x"], array_of_points["y"]];
+      var point2 = [array_of_points["width"], array_of_points["height"]]
+      big.rectangle(point1, point2, WHITE);
+      
 
-        
-        var first_end_point_x = greatest_difference.point_one[0];
-        var first_end_point_y = greatest_difference.point_one[1];
-        var second_end_point_x = greatest_difference.point_two[0];
-        var second_end_point_y = greatest_difference.point_two[1];
+      
+      //arclength is the perimeter
+      big.putText(worm_contours.length.toString(), cgx, cgy, "HERSEY_COMPLEX_SMALL", RED, 1, 1);
 
-        
-
-      big.line([first_end_point_x - 5, first_end_point_y], [first_end_point_x + 5, first_end_point_y], YELLOW);
-      big.line([first_end_point_x, first_end_point_y - 5], [first_end_point_x, first_end_point_y + 5], YELLOW);
-
-      big.line([second_end_point_x - 5, second_end_point_y], [second_end_point_x + 5, second_end_point_y], YELLOW);
-      big.line([second_end_point_x, second_end_point_y - 5], [second_end_point_x, second_end_point_y + 5], YELLOW);
-        
-//end of max points
+      var array_len = Number((contours.arcLength(i)/2.0).toFixed(1));
+      var array_area = Number((contours.area(i)).toFixed(1));
+      var array_width = array_of_points["width"];
+      var array_height = array_of_points["height"];
 
 
-        var array_of_points = contours.boundingRect(i);
-        var point1 = [array_of_points["x"], array_of_points["y"]];
-        var point2 = [array_of_points["width"], array_of_points["height"]]
-        big.rectangle(point1, point2, WHITE);
-        
-
-        
-        //arclength is the perimeter
-        big.putText(worm_contours.length.toString(), cgx, cgy, "HERSEY_COMPLEX_SMALL", RED, 1, 1);
-
-        var array_len = Number((contours.arcLength(i)/2.0).toFixed(1));
-        var array_area = Number((contours.area(i)).toFixed(1));
-        var array_width = array_of_points["width"];
-        var array_height = array_of_points["height"];
-
-
-        worm_array.push({len: array_len, area: array_area, bounding_width: array_width, bounding_height: array_height});   
-        array_of_points = [];
-        }
+     worm_array.push({len: array_len, area: array_area, bounding_width: array_width, bounding_height: array_height});   
+     array_of_points = [];
+    }
   }
 
 
