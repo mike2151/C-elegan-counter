@@ -234,9 +234,9 @@ router.post("/video_velocity/:token", function(req,res) {
         while(!fileExists("./public/uploads/" + "output-" + new_session_token + ".png") && !fileExists("./public/uploads/" + "output-" + second_new_sessions_token + ".png")) {require('deasync').sleep(1000);}
         processWorms(new_session_token, noise);
         
-        while(!fileExists("./public/uploads/" + "processed-" + new_session_token + ".png")) {require('deasync').sleep(1000);}
+        while(!fileExists("./public/uploads/" + "processed-" + new_session_token + ".png")) {require('deasync').sleep(500);}
         processWorms(second_new_sessions_token, noise);
-        while(!fileExists("./public/uploads/" + "processed-" + second_new_sessions_token + ".png")) {require('deasync').sleep(1000);}
+        while(!fileExists("./public/uploads/" + "processed-" + second_new_sessions_token + ".png")) {require('deasync').sleep(500);}
         //two files are now created.
         
         get_velocity(new_session_token, second_new_sessions_token, time_between, area_percent_image);
