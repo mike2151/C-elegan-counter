@@ -10,7 +10,7 @@ var fse = require('fs-extra');
 
 //generate unique token for the session
 var session_token = getRandomInt(1, 10000000).toString();
-var second_session_token = getRandomInt(1, 10000000).toString();
+
 
 //declared to pass data to analysis
 var image_width;
@@ -31,24 +31,6 @@ var storage =   multer.diskStorage({
   }
 });
 
-var storage_one =   multer.diskStorage({
-  destination: function (req, file, callback) {
-    callback(null, './public/uploads');
-  },
-  filename: function (req, file, callback) {
-    callback(null, file.fieldname + '-' + session_token + ".png");
-  }
-});
-
-var storage_two =   multer.diskStorage({
-  destination: function (req, file, callback) {
-    callback(null, './public/uploads');
-  },
-  filename: function (req, file, callback) {
-    callback(null, file.fieldname + '-' + second_session_token + ".png");
-  }
-});
-
 var storage_vid =   multer.diskStorage({
   destination: function (req, file, callback) {
     callback(null, './public/uploads');
@@ -56,11 +38,9 @@ var storage_vid =   multer.diskStorage({
   filename: function (req, file, callback) {
     callback(null, file.fieldname + '-' + session_token + ".mp4");
   }
-}); 
+});
 
 var upload = multer({ storage : storage}).single('photo');
-var upload_one = multer({ storage : storage}).single('photo_one');
-var upload_two = multer({ storage : storage}).single('photo_two');
 var upload_vid = multer({ storage : storage_vid}).single('video');
 
 
@@ -118,73 +98,6 @@ router.post("/analyze", function(req,res) {
         res.redirect("/analyze/" + session_token);
     });
 });
-
-
-router.post("/image_speed", function(req,res) {
-
-     upload_one(req,res,function(err) {
-        if(err) {
-            res.redirect("/analyze");
-            console.log(err);
-        }
-        upload_two(req,res,function(err) {
-            if(err) {
-                res.redirect("/analyze");
-            }
-                var start_time = req.body.time_one;
-                var end_time = req.body.time_two;
-                var time_between = end_time - start_time;
-
-                var contrast_one = parseInt(req.body.contrast_one);
-                var hue_one = parseInt(req.body.hue_one);
-                var vibrance_one = parseInt(req.body.vibrance_one);
-                var noise_one = parseInt(req.body.noise_one);
-                var area_percent_image = parseFloat(req.body.areapercent_one);
-
-                var contrast_two = parseInt(req.body.contrast_two);
-                var hue_two = parseInt(req.body.hue_two);
-                var vibrance_two = parseInt(req.body.vibrance_two);
-                var noise_two = parseInt(req.body.noise_two);
-
-
-   
-    
-        //two images now created
-                //while(!fileExists("./public/uploads/" + "photo-" + new_session_token + ".png") && !fileExists("./public/uploads/" + "photo-" + second_new_sessions_token + ".png")) {require('deasync').sleep(1000);}
-                
-                initial_process(session_token, contrast_one, hue_one, vibrance_one);
-                initial_process(second_session_token, contrast_two, hue_two, vibrance_two);
-                while(!fileExists("./public/uploads/" + "output-" + session_token + ".png") && !fileExists("./public/uploads/" + "output-" + second_session_token + ".png")) {require('deasync').sleep(1000);}
-                processWorms(session_token, noise_one);
-                processWorms(second_session_token, noise_two);
-                while(!fileExists("./public/uploads/" + "processed-" + session_token + ".png") && !fileExists("./public/uploads/" + "processed-" + second_session_token + ".png")) {require('deasync').sleep(2000);}
-                //two files are now created.
-                
-                get_velocity(session_token, second_session_token, time_between, area_percent_image);
-                var image_one_link = ("../uploads/" + "worms-" + session_token + ".png");
-                var image_two_link = ("../uploads/" + "worms-" + second_session_token + ".png");
-                var time_var = start_time.toString() + " - " + end_time.toString() + " seconds";
-                res.render("velocities", {image_one_link: image_one_link, image_two_link: image_two_link, image_one_width: im1w, image_one_height: im1h, image_two_width: im2w, image_two_height: im2h, velocities: velocities, image_one_positions: global_image_one_positions, image_two_positions: global_image_two_positions, time_var: time_var});
-                while(!fileExists("./public/uploads/" + "worms-" + new_session_token + ".png") && !fileExists("./public/uploads/" + "worms-" + second_new_sessions_token + ".png")) {require('deasync').sleep(1000);}
-                //delete old files to keep room
-                fs.unlinkSync("./public/uploads/" + "photo-" + new_session_token + ".png");
-                fs.unlinkSync("./public/uploads/" + "photo-" + second_new_sessions_token + ".png");
-                fs.unlinkSync("./public/uploads/" + "output-" + new_session_token + ".png");
-                fs.unlinkSync("./public/uploads/" + "output-" + second_new_sessions_token + ".png");
-                fs.unlinkSync("./public/uploads/" + "processed-" + new_session_token + ".png");
-                fs.unlinkSync("./public/uploads/" + "processed-" + second_new_sessions_token + ".png");
-            });
-
-    });
-
-
-
-
-
-    
-
-});
-
 
 router.post("/config", function(req,res) {
     upload(req,res,function(err) {
@@ -284,6 +197,7 @@ router.post("/video_analyze/:token", function(req,res) {
 });
 
 router.post("/video_velocity/:token", function(req,res) {
+    
     var token = req.params.token;
     var start_time = req.body.start_time;
     var end_time = req.body.end_time;
@@ -313,13 +227,16 @@ router.post("/video_velocity/:token", function(req,res) {
   });
 
   //two images now created
-        while(!fileExists("./public/uploads/" + "photo-" + new_session_token + ".png") && !fileExists("./public/uploads/" + "photo-" + second_new_sessions_token + ".png")) {require('deasync').sleep(1000);}
+        while(!fileExists("./public/uploads/" + "photo-" + new_session_token + ".png")) {require('deasync').sleep(1000);}
+        while(!fileExists("./public/uploads/" + "photo-" + second_new_sessions_token + ".png")) {require('deasync').sleep(1000);}
         initial_process(new_session_token, contrast, hue, vibrance);
         initial_process(second_new_sessions_token, contrast, hue, vibrance);
         while(!fileExists("./public/uploads/" + "output-" + new_session_token + ".png") && !fileExists("./public/uploads/" + "output-" + second_new_sessions_token + ".png")) {require('deasync').sleep(1000);}
         processWorms(new_session_token, noise);
+        
+        while(!fileExists("./public/uploads/" + "processed-" + new_session_token + ".png")) {require('deasync').sleep(1000);}
         processWorms(second_new_sessions_token, noise);
-        while(!fileExists("./public/uploads/" + "processed-" + new_session_token + ".png") && !fileExists("./public/uploads/" + "processed-" + second_new_sessions_token + ".png")) {require('deasync').sleep(2000);}
+        while(!fileExists("./public/uploads/" + "processed-" + second_new_sessions_token + ".png")) {require('deasync').sleep(1000);}
         //two files are now created.
         
         get_velocity(new_session_token, second_new_sessions_token, time_between, area_percent_image);
@@ -655,19 +572,14 @@ function getRandomInt(min, max) {
 
 function fileExists(filePath)
 {
-  try  {
-    return fs.statSync(filePath).isFile();
-  }
-  catch (e) {
-
-    if (e.code == 'ENOENT') { // no such file or directory. File really does not exist
-      console.log("File does not exist.");
-      return false;
+    try
+    {
+        return fs.statSync(filePath).isFile();
     }
-
-    console.log("Exception fs.statSync (" + path + "): " + e);
-    throw e; // something else went wrong, we don't have rights, ...
-  }
+    catch (err)
+    {
+        return false;
+    }
 }
 
 

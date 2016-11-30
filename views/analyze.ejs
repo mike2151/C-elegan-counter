@@ -103,88 +103,6 @@
 										<input type="submit" value="Process Image" name="submit">
 										</form>
                                         <br>
-										<br>
-
-
-										<hr>
-										<h1>Speed of Worms</h1>
-										<p>Speed of worms takes two screenshots and calculates the speed of the objects moving between images. See the velocties section for more info.
-											<br>
-											 <br><span style="color: red">NOTE: MAKE SURE THE IMAGES ARE THE SAME SIZES</span>
-											 <br>Use an online photoshop application to create images of equal size. Or just take equally sized screenshots
-											 </p>
-										<hr>
-											<br>
-										<form method="post" action="/image_speed" enctype="multipart/form-data"> 
-                                        <div class="form-group">
-											<div class="col-md-6">
-                                            <label><h4>First Image File</h4></label>
-                                            <center><div id="btn_one" style="height: 50px; width: 150px;border: 1px dashed #BBB; cursor:pointer;" onclick="getFile_one()">Upload Image 1</div>
-                                            <div style='height: 0px;width: 0px; overflow:hidden;'><input type="file" value="upload" id="up_one_file" name="photo_one" accept="image/*" /></div></center>
-                                            </div>
-											<div class="col-md-6">
-											<label><h4>Optional Processing Settings for Image One</h4></label>
-											<hr>
-											<br>
-											<br>
-                                             <label><h4>Detection Threshold (%)</h4></label>
-                                           <br>
-                                            <center><input type="text" class="form-control" name="area_percent_one" placeholder=".002" style="width: 8em"></center><br>
-											
-											<label><h4>Contrast (1-100)</h4></label>
-											<center><input type="number" class="form-control" name="contrast_one" value="65" style="width: 8em"/></center>
-											<br>
-											<label><h4>Hue (1-100)</h4></label>
-											<center><input type="number" class="form-control" name="hue_one" value="100" style="width: 8em"/></center>
-											<br>
-											<label><h4>Vibrance (1-100)</h4></label>
-											<center><input type="number" class="form-control" name="vibrance_one" value="100" style="width: 8em"/></center>
-											<br>
-											<label><h4>Noise Removal Cycles (Any positive integer)</h4></label>
-											<center><input type="number" class="form-control" name="noise_one" value="20" style="width: 8em"/></center>
-                                            <br>  
-											<label><h4>Time of Image One (seconds)</h4></label>
-											<center><input type="number" class="form-control" name="time_one" value="" style="width: 8em"/></center>
-											<br>
-                                        </div>
-										</div>
-										<div class="form-group">
-											<div class="col-md-6">
-                                            <label><h4>Second Image File</h4></label>
-                                            <center><div id="btn_two" style="height: 50px; width: 150px;border: 1px dashed #BBB; cursor:pointer;" onclick="getFile_two()">Upload Image 2</div>
-                                            <div style='height: 0px;width: 0px; overflow:hidden;'><input type="file" value="upload" id="up_two_file" name="photo_two" accept="image/*" /></div></center>
-                                            </div>
-											<div class="col-md-6">
-											<label><h4>Optional Processing Settings for Image Two</h4></label>
-											<hr>
-											<br>
-											<br>
-                                            
-											<label><h4>Contrast (1-100)</h4></label>
-											<center><input type="number" class="form-control" name="contrast_two" value="65" style="width: 8em"/></center>
-											<br>
-											<label><h4>Hue (1-100)</h4></label>
-											<center><input type="number" class="form-control" name="hue_two" value="100" style="width: 8em"/></center>
-											<br>
-											<label><h4>Vibrance (1-100)</h4></label>
-											<center><input type="number" class="form-control" name="vibrance_two" value="100" style="width: 8em"/></center>
-											<br>
-											<label><h4>Noise Removal Cycles (Any positive integer)</h4></label>
-											<center><input type="number" class="form-control" name="noise_two" value="20" style="width: 8em"/></center>
-                                            <br>  
-											<label><h4>Time of Image Two (seconds)</h4></label>
-											<center><input type="number" class="form-control" name="time_two" value="" style="width: 8em"/></center>
-											<br>
-                                        </div>
-										</div>
-
-
-										<input type="submit" value="Calculate Speeds" name="submit">
-										</form>
-                                        <br>
-
-
-
 										<h3>Processing Variables</h3>
 										<hr>
 										<ol>
@@ -224,14 +142,6 @@
                 function getFile(){
                         document.getElementById("upfile").click();
                         document.getElementById("yourBtn").innerHTML = "Uploaded";
-                    }
-					function getFile_one(){
-                        document.getElementById("upfile").click();
-                        document.getElementById("btn_one").innerHTML = "Uploaded";
-                    }
-					function getFile_two(){
-                        document.getElementById("upfile").click();
-                        document.getElementById("btn_two").innerHTML = "Uploaded";
                     }
             </script>
 
